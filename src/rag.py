@@ -11,7 +11,7 @@ import jieba
 import torch
 
 from tools import tool
-from config import EMBEDDING_DB_NAME, RETRIEVER_TOP_K, RERANKER_MODEL_NAME
+from config import EMBEDDING_DB_NAME, RETRIEVER_TOP_K, RERANKER_MODEL_NAME, DEVICE
 # from llm.llm_openai import get_ChatOpenAI
 from llm.chatglm import get_LLM
 

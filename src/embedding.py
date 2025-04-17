@@ -7,8 +7,6 @@ from tools import tool
 
 
 def _create_db(documents, embedding):
-    # FAISS在高效相似度搜索和GPU加速方面表现出色
-    # ChromaDB则提供了全面的数据库功能和分布式处理能力
     db = FAISS.from_documents(
         documents, 
         embedding
