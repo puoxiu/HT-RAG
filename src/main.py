@@ -1,8 +1,14 @@
 from embedding import init_embeddings
 from rag_call import answer
+from evaluation import evaluate
 import urls
+import argparse
+
+# https://abdullin.com/ilya/how-to-build-best-rag/
 
 
+parser = argparse.ArgumentParser()
+parser.add_argument('-m', '--mode', type=int, default=0, help='运行模式: 0-对话模式, 1-评估模式')
 
 
 
@@ -14,17 +20,18 @@ if __name__ == '__main__':
         exit(1)
 
     init_embeddings(urls.valid_urls)
-
-    print("嵌入模型初始化完成。")
-    print("请开始提问：")
-
     
-    while True:
-        question = input("请输入问题(输入exit退出):")
-        if question.lower() == "exit":
-            break
-        # question = "请问 TuGraph 的存储过程？"
-        answer_result = answer(question)
-        print(answer_result)
+    args = parser.parse_args()
+    if args.mode == 0:
+        print("请开始提问：")
+        while True:
+            question = input("请输入问题(输入exit退出):")
+            if question.lower() == "exit":
+                break
+            # question = "请问 TuGraph 的存储过程？"
+            answer_result = answer(question)
+            print(answer_result)
+    elif args.mode == 1:
+        evaluate()
 
     

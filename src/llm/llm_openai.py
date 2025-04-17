@@ -23,5 +23,5 @@ if __name__ == "__main__":
     )
     from langchain.schema import HumanMessage
     res = llm.invoke([HumanMessage(content="请介绍一下自己")])
-    # llm.predict("请问TuGraph-DB的安装步骤是什么？")
+    llm.predict("请问TuGraph-DB的安装步骤是什么？")
     print(res)

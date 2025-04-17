@@ -12,7 +12,8 @@ import torch
 
 from tools import tool
 from config import EMBEDDING_DB_NAME, RETRIEVER_TOP_K, RERANKER_MODEL_NAME
-from llm.llm_openai import get_ChatOpenAI
+# from llm.llm_openai import get_ChatOpenAI
+from llm.chatglm import get_LLM
 
 class RAG():
     def __init__(self, use_ensemble: bool):
@@ -20,7 +21,7 @@ class RAG():
         :param use_ensemble: 是否使用混合分词/检索
         """
         self.retriver = self._get_embedding_retriever(use_ensemble)
-        self.llm = get_ChatOpenAI()
+        self.llm = get_LLM()  # LLM模型
         # reranker
         
         self.tokenizer = AutoTokenizer.from_pretrained(RERANKER_MODEL_NAME)
@@ -142,17 +143,17 @@ class RAG():
         contex = self.get_context(question, is_rewrite)
         
         PROMPT_TEMPLATE = """
-        As a specialized AI assistant for question-answering, I will use the given context to provide a clear and concise response to your query in no more than three sentences, without adding any LLM-specific filler words such as '好的' or '从资料中可以得出'. If the necessary information is not available, I will let you know.
-        Aanswer in a brief way. If there is a clear answer to the question, just provide the answer without explanation.
-        Context:
+        作为一个专门用于问答的人工智能助手，我会使用给定的上下文来为你的查询提供清晰简洁的回答，回答不超过五句话，并且不会添加任何诸如“好的”或“从资料中可以得出”这样的大语言模型常用的填充词。如果没有可用的必要信息，我会如实告知你。
+        回答要简洁。如果问题有明确答案，直接提供答案，无需解释；若没有相关答案，你直接回复： '对不起，暂时不能回答这个问题。'。
+        上下文：
         {context}
         ---
-        Question:
+        问题：
         {question}
         ---
-        Answer in Chinese if you can, except for terms and proper nouns.
-        Note: For questions in the format of 'input_field': question, 'output_field': 'answer', please provide only the answer value without additional text.
-        Here is your answer:
+        尽量用中文回答，术语和专有名词除外。
+        注意：对于格式为“input_field”: 问题, “output_field”: “答案” 的问题，请仅提供答案值，无需额外文本。
+        以下是你的答案：
         """
 
         prompt = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)

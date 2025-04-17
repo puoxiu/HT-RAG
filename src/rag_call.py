@@ -21,7 +21,6 @@ def answer(question: str, use_ensemble: bool = False, is_rewrite: bool = True):
 
 
 if __name__ == "__main__":
-    
     question = "请问TuGraph-DB的安装步骤是什么？"
     answer_result = answer(question)
     print(answer_result)
