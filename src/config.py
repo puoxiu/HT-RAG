@@ -10,7 +10,7 @@ SOURCE_URL_FILE = "../data/source_urls.txt"
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
-CHUNK_SIZE = 1000  # 分片大小
+CHUNK_SIZE = 500  # 分片大小
 CHUNK_OVERLAP = 100  # 分片重叠大小
 
 #=============================================== embedding re-rank 向量数据库 的配置 ==========================================#
@@ -45,6 +45,6 @@ loglog = MyLogger().get_logger()
 
 #======================================================= 评估配置 ======================================================#
 # 评估数据集路径
-EVAL_DATASET_PATH = "../data/val.json"
+EVAL_DATASET_PATH = "../data/val2.json"
 # # 评估结果保存路径
 # EVAL_RESULT_PATH = "../data/eval_result.json"

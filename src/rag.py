@@ -11,7 +11,7 @@ import jieba
 import torch
 
 from tools import tool
-from config import EMBEDDING_DB_NAME, RETRIEVER_TOP_K, RERANKER_MODEL_NAME, DEVICE
+from config import EMBEDDING_DB_NAME, RETRIEVER_TOP_K, RERANKER_MODEL_NAME, DEVICE, loglog
 # from llm.llm_openai import get_ChatOpenAI
 from llm.chatglm import get_LLM
 
@@ -32,7 +32,7 @@ class RAG():
     # 重写问题
     def _rewrite_question(self, question):
         prompt_template = """
-            现在我需要向您咨询有关TuGraph-DB的问题。请按照以下指导原则改写我的问题，以确保它适合用于数据库查询或搜索引擎检索：
+            现在我需要向您咨询有关股票的问题。请按照以下指导原则改写我的问题，以确保它适合用于数据库查询或搜索引擎检索：
             - 将原始问题转换成明确、简洁且针对性强的形式；
             - 确保问题表述专业，避免使用口语化或非正式的语言；
             - 维持问题的原始含义，不得添加或删除任何重要信息；
@@ -77,7 +77,8 @@ class RAG():
             return retriever
 
         # 重新生成docs耗时过久, 使用缓存
-        docs = tool.get_contents(tuple(urls.urls))
+        docs = tool.get_contents(tuple(urls.valid_urls))
+        loglog.debug(f"建立bm25检索器, 当前文档数量: len(docs) = {len(docs)}")
 
         bm25_retriever = BM25Retriever.from_documents(
             docs,
@@ -108,10 +109,11 @@ class RAG():
         docs = self.retriver.invoke(question)
         re_docs = self.retriver.invoke(re_question) if is_rewrite else None
         
-        # 余弦相似度重排
+        # 得到文档的分数
         def _get_docs_scores(docs):
             pairs = [[question, doc.page_content] for doc in docs]
             with torch.no_grad():
+                # 使用重排模型进行评分
                 inputs = self.tokenizer(pairs, padding=True, truncation=True, return_tensors='pt', max_length=512)
                 scores = self.model(**inputs, return_dict=True).logits.view(-1, ).float()
             # 确保scores是一维的
@@ -129,6 +131,7 @@ class RAG():
         # 从大到小排序
         doc_scores.sort(key=lambda x: x[1], reverse=True)
         # 过滤掉分数低于阈值的文档
+        loglog.debug(f"当前检索到的文档数量: {len(doc_scores)}")
         sorted_docs = [doc for doc, score in doc_scores if score >= score_threshold][:RETRIEVER_TOP_K]
 
         # 长上下文检索器
@@ -144,7 +147,7 @@ class RAG():
         
         PROMPT_TEMPLATE = """
         作为一个专门用于问答的人工智能助手，我会使用给定的上下文来为你的查询提供清晰简洁的回答，回答不超过五句话，并且不会添加任何诸如“好的”或“从资料中可以得出”这样的大语言模型常用的填充词。如果没有可用的必要信息，我会如实告知你。
-        回答要简洁。如果问题有明确答案，直接提供答案，无需解释；若没有相关答案，你直接回复： '对不起，暂时不能回答这个问题。'。
+        回答要简洁。如果问题有明确答案，则只需回答答案；若没有相关答案，你直接回复： '对不起，暂时不能回答这个问题。'。
         上下文：
         {context}
         ---

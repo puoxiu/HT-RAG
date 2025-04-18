@@ -15,7 +15,6 @@ def _create_db(documents, embedding):
     return db
 
 
-
 def init_embeddings(urls : list[str]):
     # 1.分解url网页内容
     urls = tuple(urls)
