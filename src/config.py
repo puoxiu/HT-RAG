@@ -26,10 +26,10 @@ RERANKER_MODEL_NAME = "BAAI/bge-reranker-large"
 # 如果使用openai的模型
 BASE_URL_OPENAI = "https://www.dmxapi.cn/v1"
 LLM_MODEL_OPENAI = "gpt-4o-mini"
-API_KEY_OPENAI = "sk-5geduntoNvm5OTAla9PDcnNnzErVD3zFSp8ZM0OxvrCPyT5o"
+API_KEY_OPENAI = "xsk-5geduntoNvm5OTAla9PDcnNnzErVD3zFSp8ZM0OxvrCPyT5o"
 # 如果使用glm模型
 LLM_MODEL_GLM = "glm-4-plus"
-API_KEY_GLM = "4ccfe9c199d147628bd5a8d18bb26f5f.TyygD9D0cAMwAZ2R"
+API_KEY_GLM = "x4ccfe9c199d147628bd5a8d18bb26f5f.TyygD9D0cAMwAZ2R"
 LLM_API_BASE = "https://open.bigmodel.cn/api/paas/v4/"
 
 # 如果使用ollama本地模型
